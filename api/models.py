@@ -4,7 +4,8 @@ from django.db import models
 class Event(models.Model):
     group = models.CharField(max_length=64)
     name = models.CharField(max_length=256)
-    date = models.DateTimeField()
+    date = models.DateField()
+    time = models.TimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['date']
