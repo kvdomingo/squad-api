@@ -31,7 +31,9 @@ DEBUG = bool(int(os.environ.get('DEBUG')))
 
 PYTHON_ENV = os.environ.get('PYTHON_ENV')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'squadtime-api.herokuapp.com',
+]
 
 if PYTHON_ENV == 'development':
     ALLOWED_HOSTS.extend([
@@ -41,7 +43,9 @@ if PYTHON_ENV == 'development':
 
 CORS_ORIGIN_ALLOW_ALL = PYTHON_ENV != 'production'
 
-CORS_ORIGIN_WHITELIST = []
+CORS_ORIGIN_WHITELIST = [
+    'https://squadtime.vercel.app',
+]
 
 
 # Application definition
