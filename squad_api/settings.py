@@ -43,8 +43,13 @@ if PYTHON_ENV == 'development':
 
 CORS_ORIGIN_ALLOW_ALL = PYTHON_ENV != 'production'
 
-CORS_ORIGIN_WHITELIST = [
+CORS_ALLOWED_ORIGINS = [
     'https://squadtime.vercel.app',
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^http://127.0.0.1:3\d{3}$',
+    r'^http://localhost:3\d{3}$',
 ]
 
 
