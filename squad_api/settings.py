@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -31,26 +32,9 @@ DEBUG = bool(int(os.environ.get('DEBUG')))
 
 PYTHON_ENV = os.environ.get('PYTHON_ENV')
 
-ALLOWED_HOSTS = [
-    'squadtime-api.herokuapp.com',
-]
+ALLOWED_HOSTS = ['*']
 
-if PYTHON_ENV == 'development':
-    ALLOWED_HOSTS.extend([
-        '127.0.0.1',
-        'localhost',
-    ])
-
-CORS_ORIGIN_ALLOW_ALL = PYTHON_ENV != 'production'
-
-CORS_ALLOWED_ORIGINS = [
-    'https://squadtime.vercel.app',
-]
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^http://127.0.0.1:3\d{3}$',
-    r'^http://localhost:3\d{3}$',
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -103,10 +87,7 @@ WSGI_APPLICATION = 'squad_api.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': {**dj_database_url.config()}
 }
 
 
@@ -152,7 +133,3 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-if PYTHON_ENV != 'development':
-    import django_heroku
-    django_heroku.settings(locals())
