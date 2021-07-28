@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 import dj_database_url
+import urllib
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -87,9 +88,14 @@ WSGI_APPLICATION = 'squad_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {**dj_database_url.config()}
-}
+if PYTHON_ENV == 'development':
+    DATABASE_CONFIG = dj_database_url.config()
+else:
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    DATABASE_CONFIG = dj_database_url.parse(DATABASE_URL)
+    DATABASE_CONFIG['HOST'] = urllib.parse.unquote(DATABASE_CONFIG['HOST'])
+
+DATABASES = {'default': DATABASE_CONFIG}
 
 
 # Password validation
