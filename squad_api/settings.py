@@ -29,14 +29,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get('DEBUG')))
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
-PYTHON_ENV = os.environ.get('PYTHON_ENV')
+PYTHON_ENV = os.environ.get('PYTHON_ENV', 'production')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['api.schedule.kvdstudio.app']
 
-CORS_ORIGIN_ALLOW_ALL = True
+if PYTHON_ENV == 'development':
+    ALLOWED_HOSTS.extend([
+        'localhost',
+        '127.0.0.1',
+    ])
 
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https:\/\/schedule\.kvdstudio\.app$',
+]
+
+if PYTHON_ENV == 'development':
+    CORS_ALLOWED_ORIGIN_REGEXES.extend([
+        r'^http:\/\/localhost:300\d$',
+        r'^http:\/\/127\.0\.0\.1:300\d$',
+    ])
 
 # Application definition
 
