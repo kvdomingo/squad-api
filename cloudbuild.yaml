@@ -1,15 +1,14 @@
 steps:
-  - name: gcr.io/k8s-skaffold/pack
+  - name: gcr.io/cloud-builders/docker
     args:
       - build
+      - "-t"
       - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
-      - '--builder=gcr.io/buildpacks/builder:v1'
-      - '--path=.'
-    id: Buildpack
-    entrypoint: pack
+      - "."
+    id: Build
     env:
-      - "SECRET_KEY=$_DJANGO_SECRET_KEY"
-      - "DATABASE_URL=$_DATABASE_URL"
+      - "SECRET_KEY=${_DJANGO_SECRET_KEY}"
+      - "DATABASE_URL=${_DATABASE_URL}"
   - name: gcr.io/cloud-builders/docker
     args:
       - push

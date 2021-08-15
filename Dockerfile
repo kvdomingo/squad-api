@@ -9,8 +9,8 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ENV SECRET_KEY=$SECRET_KEY
-ENV DATABASE_URL=$DATABASE_URL
+ENV SECRET_KEY=$SECRET_KEY \
+    DATABASE_URL=$DATABASE_URL
 
 RUN python manage.py collectstatic --noinput
 
