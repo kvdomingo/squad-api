@@ -1,4 +1,3 @@
-from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,6 +8,13 @@ from .serializers import *
 class EventView(ListAPIView):
     queryset = Event.objects.filter(date__gte=timezone.now())
     serializer_class = EventSerializer
+
+
+class BirthdayView(ListAPIView):
+    queryset = (Birthday.objects
+                .filter(date__month__gte=timezone.now().month)
+                .filter(date__month__lte=(timezone.now() + timezone.timedelta(days=30)).month))
+    serializer_class = BirthdaySerializer
 
 
 class DiscordUserView(APIView):

@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from humanize import ordinal
 
 
 class Event(models.Model):
@@ -11,6 +13,19 @@ class Event(models.Model):
 
     def __str__(self):
         return f'[{self.group.upper()}] {self.name}'
+
+
+class Birthday(models.Model):
+    group = models.CharField(max_length=64, blank=True, null=True)
+    name = models.CharField(max_length=64)
+    date = models.DateField()
+
+    class Meta:
+        ordering = ['date']
+
+    def __str__(self):
+        group = f'({self.group})' if self.group else ''
+        return f'[{self.date}] {self.name} {group}'
 
 
 class DiscordUser(models.Model):
