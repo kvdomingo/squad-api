@@ -11,8 +11,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+import dj_database_url
+import urllib
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.management.utils import get_random_secret_key
 
 load_dotenv()
 
@@ -24,34 +27,37 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get('DEBUG')))
+DEBUG = bool(int(os.environ.get('DEBUG', '0')))
 
-PYTHON_ENV = os.environ.get('PYTHON_ENV')
+PYTHON_ENV = os.environ.get('PYTHON_ENV', 'production')
 
-ALLOWED_HOSTS = [
-    'squadtime-api.herokuapp.com',
-]
+ALLOWED_HOSTS = ['*']
 
-if PYTHON_ENV == 'development':
-    ALLOWED_HOSTS.extend([
-        '127.0.0.1',
-        'localhost',
-    ])
+# ALLOWED_HOSTS = ['api.schedule.kvdstudio.app']
+#
+# if PYTHON_ENV == 'development':
+#     ALLOWED_HOSTS.extend([
+#         'localhost',
+#         '127.0.0.1',
+#     ])
 
-CORS_ORIGIN_ALLOW_ALL = PYTHON_ENV != 'production'
+CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOWED_ORIGINS = [
-    'https://squadtime.vercel.app',
-]
+CORS_ALLOWED_ORIGINS = ['*']
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r'^http://127.0.0.1:3\d{3}$',
-    r'^http://localhost:3\d{3}$',
-]
-
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r'^https:\/\/schedule\.kvdstudio\.app$',
+# ]
+#
+# if PYTHON_ENV == 'development':
+#     CORS_ALLOWED_ORIGIN_REGEXES.extend([
+#         r'^http:\/\/localhost:300\d$',
+#         r'^http:\/\/127\.0\.0\.1:300\d$',
+#         r'^http:\/\/0\.0\.0\.0:\d{4,}$',
+#     ])
 
 # Application definition
 
@@ -70,6 +76,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,7 +90,7 @@ ROOT_URLCONF = 'squad_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'web' / 'app'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,12 +109,14 @@ WSGI_APPLICATION = 'squad_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+if PYTHON_ENV == 'development':
+    DATABASE_CONFIG = dj_database_url.config()
+else:
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    DATABASE_CONFIG = dj_database_url.parse(DATABASE_URL)
+    DATABASE_CONFIG['HOST'] = urllib.parse.unquote(DATABASE_CONFIG['HOST'])
+
+DATABASES = {'default': DATABASE_CONFIG}
 
 
 # Password validation
@@ -148,11 +157,15 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = BASE_DIR / 'static'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'web' / 'app' / 'static',
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-if PYTHON_ENV != 'development':
-    import django_heroku
-    django_heroku.settings(locals())
