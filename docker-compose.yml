@@ -10,4 +10,4 @@ services:
     image: kvdomingo/squadtime
     env_file: .env
     ports:
-      - ${HTTP_PORT}:${HTTP_PORT}
+      - ${PORT}:${PORT}
