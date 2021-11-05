@@ -25,9 +25,8 @@ COPY --from=build /web/app/build ./web/app/
 
 ARG DATABASE_URL
 ENV DATABASE_URL $DATABASE_URL
-
 RUN python manage.py collectstatic --noinput -c
 
-EXPOSE $HTTP_PORT
+EXPOSE $PORT
 
-ENTRYPOINT gunicorn squad_api.wsgi -b 0.0.0.0:$HTTP_PORT --capture-output --log-file -
+ENTRYPOINT gunicorn squad_api.wsgi -b 0.0.0.0:$PORT --capture-output --log-file -
