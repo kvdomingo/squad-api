@@ -8,8 +8,6 @@ steps:
       - .
       - '-f'
       - Dockerfile
-      - '--build-arg'
-      - 'DATABASE_URL=$_DATABASE_URL'
     id: Build
 
   - name: 'gcr.io/cloud-builders/docker'
