@@ -11,6 +11,12 @@ class EventView(ListAPIView):
     serializer_class = EventSerializer
 
 
+class BirthdayView(ListAPIView):
+    queryset = (Birthday.objects
+                .filter(date__month=timezone.now().month))
+    serializer_class = BirthdaySerializer
+
+
 class DiscordUserView(APIView):
     def get(self, request, discord_id):
         try:

@@ -13,6 +13,19 @@ class Event(models.Model):
         return f'[{self.group.upper()}] {self.name}'
 
 
+class Birthday(models.Model):
+    group = models.CharField(max_length=64, blank=True, null=True)
+    name = models.CharField(max_length=64)
+    date = models.DateField()
+
+    class Meta:
+        ordering = ['date__month', 'date__day']
+
+    def __str__(self):
+        group = f'({self.group})' if self.group else ''
+        return f'[{self.date}] {self.name} {group}'
+
+
 class DiscordUser(models.Model):
     discordId = models.CharField(max_length=32)
     username = models.CharField(max_length=32)

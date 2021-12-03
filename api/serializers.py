@@ -8,6 +8,12 @@ class EventSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class BirthdaySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Birthday
+        fields = '__all__'
+
+
 class DiscordUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscordUser
