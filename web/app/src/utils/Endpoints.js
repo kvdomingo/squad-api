@@ -1,7 +1,9 @@
 import axios from "axios";
 import Pizzly from "pizzly-js";
 
-const baseURL = "/api/v1.0/";
+const { NODE_ENV } = process.env;
+
+const baseURL = NODE_ENV === "development" ? "http://localhost:8000/api/v1.0" : "/api/v1.0/";
 
 const axiosInstance = axios.create({ baseURL });
 
