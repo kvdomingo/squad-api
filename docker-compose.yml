@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      target: prod
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+    image: kvdomingo/squadtime
+    env_file: .env
+    ports:
+      - ${HTTP_PORT}:${HTTP_PORT}
