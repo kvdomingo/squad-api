@@ -5,9 +5,7 @@ services:
     build:
       context: .
       target: prod
-      args:
-        - DATABASE_URL=${DATABASE_URL}
-    image: kvdomingo/squadtime
+    image: kvdomingo/squadtime:latest
     env_file: .env
     ports:
-      - ${HTTP_PORT}:${HTTP_PORT}
+      - ${PORT}:${PORT}

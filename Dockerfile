@@ -21,12 +21,9 @@ WORKDIR /backend
 COPY ./api/ ./api/
 COPY ./squad_api/ ./squad_api/
 COPY ./*.py ./
+COPY ./*.sh ./
 COPY --from=build /web/app/build ./web/app/
-
-ARG DATABASE_URL
-ENV DATABASE_URL $DATABASE_URL
-RUN python manage.py collectstatic --noinput -c
 
 EXPOSE $PORT
 
-ENTRYPOINT gunicorn squad_api.wsgi -b 0.0.0.0:$PORT --capture-output --log-file -
+ENTRYPOINT [ "sh", "runserver.sh" ]
