@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,8 +13,7 @@ class EventView(ListAPIView):
 
 class BirthdayView(ListAPIView):
     queryset = (Birthday.objects
-                .filter(date__month__gte=timezone.now().month)
-                .filter(date__month__lte=(timezone.now() + timezone.timedelta(days=30)).month))
+                .filter(date__month=timezone.now().month))
     serializer_class = BirthdaySerializer
 
 

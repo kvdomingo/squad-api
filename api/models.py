@@ -1,6 +1,4 @@
 from django.db import models
-from django.utils import timezone
-from humanize import ordinal
 
 
 class Event(models.Model):
@@ -21,7 +19,7 @@ class Birthday(models.Model):
     date = models.DateField()
 
     class Meta:
-        ordering = ['date']
+        ordering = ['date__month', 'date__day']
 
     def __str__(self):
         group = f'({self.group})' if self.group else ''
