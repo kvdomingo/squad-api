@@ -7,7 +7,7 @@ class Event(models.Model):
     date = models.DateTimeField()
 
     class Meta:
-        ordering = ['date']
+        ordering = ['date', 'group', 'name']
 
     def __str__(self):
         return f'[{self.group.upper()}] {self.name}'

@@ -11,23 +11,18 @@ import api from "../../utils/Endpoints";
 
 function Events() {
   const [events, setEvents] = useState([]);
-  const [birthdays, setBirthdays] = useState([]);
+  const [birthdays, setBirthdays] = useState({});
   const [loading, setLoading] = useState({
     events: true,
     birthdays: true,
   });
 
   useEffect(() => {
-    getEvents();
-  }, []);
-
-  function getEvents() {
     setLoading({ birthdays: true, events: true });
     api.home
       .events()
       .then(res => {
         let { data } = res;
-        data.forEach(dat => (dat.birthday = false));
         setEvents(data);
       })
       .catch(err => console.error(err.message))
@@ -37,17 +32,23 @@ function Events() {
       .birthdays()
       .then(res => {
         let { data } = res;
-        data.forEach(dat => (dat.birthday = true));
-        setBirthdays(res.data);
+        let days = [...new Set(data.map(dat => dateFormat(new Date(dat.date), "d")))];
+        let birthdays = {};
+        days.forEach(day => (birthdays[day] = []));
+        data.forEach(dat => {
+          let month = dateFormat(new Date(dat.date), "d");
+          birthdays[month].push(dat);
+        });
+        setBirthdays(birthdays);
       })
       .catch(err => console.error(err.message))
       .finally(() => setLoading(prevState => ({ ...prevState, birthdays: false })));
-  }
+  }, []);
 
   return (
     <div>
-      <Row>
-        <Col>
+      <Row className="row-cols row-cols-1 row-cols-md-2">
+        <Col className="mb-5 mb-md-1">
           <ListGroup>
             <ListGroupItem>
               <Type variant="h3-responsive" tag="h1">
@@ -62,7 +63,7 @@ function Events() {
               <>
                 {events.map((el, i) => (
                   <ListGroupItem key={i}>
-                    [{dateFormat(new Date(el.date), "mmm dd | HH:MM")}] <b>{el.group.toUpperCase()}</b> {el.name}
+                    {dateFormat(new Date(el.date), "mmm d | HH:MM")} | <b>{el.group.toUpperCase()}</b> {el.name}
                   </ListGroupItem>
                 ))}
                 <small className="my-3 grey-text ">
@@ -85,15 +86,23 @@ function Events() {
               <div className="my-5 spinner-border mx-auto" role="status">
                 <span className="sr-only">Loading...</span>
               </div>
-            ) : birthdays.length > 0 ? (
-              <>
-                {birthdays.map((el, i) => (
-                  <ListGroupItem key={i}>
-                    [{dateFormat(new Date(el.date), "dd")}] <b>{el.group}</b> {el.name} (
-                    {new Date().getFullYear() - new Date(el.date).getFullYear()})
-                  </ListGroupItem>
-                ))}
-              </>
+            ) : Object.keys(birthdays).length > 0 ? (
+              Object.keys(birthdays).map((month, i) => (
+                <ListGroupItem key={i}>
+                  <Row>
+                    <Col md="1" className="d-flex align-items-center justify-content-end">
+                      {month}{" "}
+                    </Col>
+                    <Col md="11">
+                      {birthdays[month].map((el, j) => (
+                        <div key={j}>
+                          <b>{el.group}</b> {el.name} ({new Date().getFullYear() - new Date(el.date).getFullYear()})
+                        </div>
+                      ))}
+                    </Col>
+                  </Row>
+                </ListGroupItem>
+              ))
             ) : (
               <ListGroupItem>No upcoming birthdays</ListGroupItem>
             )}
