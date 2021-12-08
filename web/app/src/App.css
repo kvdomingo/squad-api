@@ -4,3 +4,8 @@
   background-color: #3e4551;
   color: white;
 }
+
+.list-group-item.active {
+  background-color: #4b515d;
+  border: 1px solid #363c47;
+}

@@ -8,6 +8,7 @@ import {
 import dateFormat from "dateformat";
 import { useEffect, useState } from "react";
 import api from "../../utils/Endpoints";
+import { isToday } from "../../utils/date";
 
 function Events() {
   const [events, setEvents] = useState([]);
@@ -62,7 +63,7 @@ function Events() {
             ) : events.length > 0 ? (
               <>
                 {events.map((el, i) => (
-                  <ListGroupItem key={i}>
+                  <ListGroupItem key={i} active={isToday(new Date(el.date))}>
                     {dateFormat(new Date(el.date), "mmm d | HH:MM")} | <b>{el.group.toUpperCase()}</b> {el.name}
                   </ListGroupItem>
                 ))}
@@ -87,14 +88,14 @@ function Events() {
                 <span className="sr-only">Loading...</span>
               </div>
             ) : Object.keys(birthdays).length > 0 ? (
-              Object.keys(birthdays).map((month, i) => (
-                <ListGroupItem key={i}>
+              Object.keys(birthdays).map((day, i) => (
+                <ListGroupItem key={i} active={parseInt(day) === new Date().getDate()}>
                   <Row>
                     <Col md="1" className="d-flex align-items-center justify-content-end">
-                      {month}{" "}
+                      {day}{" "}
                     </Col>
                     <Col md="11">
-                      {birthdays[month].map((el, j) => (
+                      {birthdays[day].map((el, j) => (
                         <div key={j}>
                           <b>{el.group}</b> {el.name} ({new Date().getFullYear() - new Date(el.date).getFullYear()})
                         </div>

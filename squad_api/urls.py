@@ -14,11 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import include, path, re_path
+from revproxy.views import ProxyView
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/', include('rest_framework.urls')),
     path('api/v1.0/', include('api.urls')),
-    re_path(r'^.*/?$', views.index),
 ]
+
+if settings.PYTHON_ENV == 'development':
+    urlpatterns.append(re_path(r'^(?P<path>.*)$', ProxyView.as_view(upstream='http://frontend:3000')))
+else:
+    urlpatterns.append(re_path(r'^.*/?$', views.index))

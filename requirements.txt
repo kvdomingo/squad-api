@@ -1,10 +1,13 @@
 django
 djangorestframework
+djangorestframework-camel-case
 django-cors-headers
-django-heroku
+django-revproxy
 dj-database-url
 gunicorn
 humanize
 python-dotenv
-psycopg2-binary
+pytz
+psycopg2cffi
+uvicorn[standard]
 whitenoise

@@ -1,11 +1,22 @@
-version: "3.8"
+version: "3.9"
 
 services:
-  app:
+  apiserver:
     build:
       context: .
-      target: prod
-    image: kvdomingo/squadtime:latest
+      target: dev
+    image: kvdomingo/squadtime-api:latest
     env_file: .env
     ports:
       - ${PORT}:${PORT}
+    volumes:
+      - .:/backend
+
+  frontend:
+    build:
+      context: .
+      target: web
+    image: kvdomingo/squadtime-web:latest
+    env_file: ./web/app/.env
+    volumes:
+      - ./web/app:/frontend

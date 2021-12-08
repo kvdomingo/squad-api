@@ -7,7 +7,7 @@ from .serializers import *
 
 
 class EventView(ListAPIView):
-    queryset = Event.objects.filter(date__gte=timezone.now())
+    queryset = Event.objects.filter(date__gte=timezone.now().date())
     serializer_class = EventSerializer
 
 
