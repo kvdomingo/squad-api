@@ -27,7 +27,7 @@ ENTRYPOINT uvicorn squad_api.asgi:application --workers 4 --host 0.0.0.0 --port 
 
 FROM node:16-alpine as build
 
-COPY ./web/app /web/app
+COPY ./web/app/ /web/app/
 
 WORKDIR /web/app
 
