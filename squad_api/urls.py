@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import json
 from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path, re_path
@@ -32,12 +33,6 @@ if settings.PYTHON_ENV == "development":
         re_path(r"^(?P<path>.*)$", ProxyView.as_view(upstream="http://frontend:3000"))
     )
 else:
-    urlpatterns.append(
-        path(
-            "favicon.ico",
-            RedirectView.as_view(url=static("favicon.ico"), permanent=True),
-        )
-    )
     urlpatterns.append(
         path(
             "robots.txt",

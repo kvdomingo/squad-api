@@ -9,5 +9,4 @@ humanize
 python-dotenv
 pytz
 psycopg2cffi
-uvicorn[standard]
 whitenoise

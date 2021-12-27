@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   MDBListGroup as ListGroup,
   MDBListGroupItem as ListGroupItem,
@@ -6,7 +7,6 @@ import {
   MDBCol as Col,
 } from "mdbreact";
 import dateFormat from "dateformat";
-import { useEffect, useState } from "react";
 import api from "../../utils/Endpoints";
 import { isToday } from "../../utils/date";
 
@@ -22,29 +22,109 @@ function Events() {
     setLoading({ birthdays: true, events: true });
     api.home
       .events()
-      .then(res => {
-        let { data } = res;
-        setEvents(data);
-      })
+      .then(res => setEvents(res.data))
       .catch(err => console.error(err.message))
       .finally(() => setLoading(prevState => ({ ...prevState, events: false })));
 
     api.home
       .birthdays()
-      .then(res => {
-        let { data } = res;
-        let days = [...new Set(data.map(dat => dateFormat(new Date(dat.date), "d")))];
-        let birthdays = {};
-        days.forEach(day => (birthdays[day] = []));
-        data.forEach(dat => {
-          let month = dateFormat(new Date(dat.date), "d");
-          birthdays[month].push(dat);
-        });
-        setBirthdays(birthdays);
-      })
+      .then(res => setBirthdays(res.data))
       .catch(err => console.error(err.message))
       .finally(() => setLoading(prevState => ({ ...prevState, birthdays: false })));
   }, []);
+
+  function RenderEvents() {
+    let render = [];
+    events.forEach(event => {
+      let dateString = new Date(event.date).toLocaleDateString();
+      let timeString = new Date(event.date).toLocaleTimeString();
+      let indexOfDate = render.findIndex(ren => ren.dateString === dateString);
+      if (indexOfDate === -1) {
+        render.push({
+          date: event.date,
+          dateString,
+          times: [
+            {
+              date: event.date,
+              timeString,
+              events: [event],
+            },
+          ],
+        });
+      } else {
+        let indexOfTime = render[indexOfDate].times.findIndex(time => time.timeString === timeString);
+        if (indexOfTime === -1) {
+          render[indexOfDate].times.push({
+            date: event.date,
+            timeString,
+            events: [event],
+          });
+        } else {
+          render[indexOfDate].times[indexOfTime].events.push(event);
+        }
+      }
+    });
+
+    return render.map((dat, i) => (
+      <ListGroupItem key={i} active={isToday(new Date(dat.date))}>
+        <Row>
+          <Col size="2" className="d-flex align-items-center justify-content-end px-0">
+            {dateFormat(new Date(dat.date), "mmm d")}
+          </Col>
+          <Col size="2" className="d-flex align-items-center justify-content-center">
+            {dateFormat(new Date(dat.times[0].date), "HH:MM")}
+          </Col>
+          <Col>
+            {dat.times[0].events.map(event => (
+              <div key={event.id} className="my-1">
+                <b>{event.group.toUpperCase()}</b> {event.name.replace(/'/g, '"')}
+              </div>
+            ))}
+          </Col>
+        </Row>
+      </ListGroupItem>
+    ));
+  }
+
+  function RenderBirthdays() {
+    let render = [];
+    birthdays.forEach(birthday => {
+      let monthDay = birthday.date.split("-").slice(1).join("-");
+      let indexOfDay = render.findIndex(ren => ren.monthDay === monthDay);
+      if (indexOfDay === -1) {
+        render.push({
+          date: birthday.date,
+          monthDay,
+          people: [birthday],
+        });
+      } else {
+        render[indexOfDay].people.push(birthday);
+      }
+    });
+
+    return render.map((dat, i) => (
+      <ListGroupItem
+        key={i}
+        active={
+          new Date(dat.date).getMonth() === new Date().getMonth() &&
+          new Date(dat.date).getDate() === new Date().getDate()
+        }
+      >
+        <Row>
+          <Col size="2" className="d-flex align-items-center justify-content-end px-0">
+            {dateFormat(new Date(dat.date), "mmm d")}
+          </Col>
+          <Col>
+            {dat.people.map(p => (
+              <div key={p.id}>
+                <b>{p.group}</b> {p.name} ({new Date().getFullYear() - new Date(p.date).getFullYear()})
+              </div>
+            ))}
+          </Col>
+        </Row>
+      </ListGroupItem>
+    ));
+  }
 
   return (
     <div>
@@ -62,12 +142,8 @@ function Events() {
               </div>
             ) : events.length > 0 ? (
               <>
-                {events.map((el, i) => (
-                  <ListGroupItem key={i} active={isToday(new Date(el.date))}>
-                    {dateFormat(new Date(el.date), "mmm d | HH:MM")} | <b>{el.group.toUpperCase()}</b> {el.name}
-                  </ListGroupItem>
-                ))}
-                <small className="my-3 grey-text ">
+                <RenderEvents />
+                <small className="my-3 grey-text">
                   <i>All times have been automatically converted to your local time.</i>
                 </small>
               </>
@@ -80,30 +156,15 @@ function Events() {
           <ListGroup>
             <ListGroupItem>
               <Type variant="h3-responsive" tag="h1">
-                <b>{dateFormat(new Date(), "mmmm")} Birthdays</b>
+                <b>Upcoming Birthdays</b>
               </Type>
             </ListGroupItem>
             {loading.birthdays ? (
               <div className="my-5 spinner-border mx-auto" role="status">
                 <span className="sr-only">Loading...</span>
               </div>
-            ) : Object.keys(birthdays).length > 0 ? (
-              Object.keys(birthdays).map((day, i) => (
-                <ListGroupItem key={i} active={parseInt(day) === new Date().getDate()}>
-                  <Row>
-                    <Col md="1" className="d-flex align-items-center justify-content-end">
-                      {day}{" "}
-                    </Col>
-                    <Col md="11">
-                      {birthdays[day].map((el, j) => (
-                        <div key={j}>
-                          <b>{el.group}</b> {el.name} ({new Date().getFullYear() - new Date(el.date).getFullYear()})
-                        </div>
-                      ))}
-                    </Col>
-                  </Row>
-                </ListGroupItem>
-              ))
+            ) : birthdays.length > 0 ? (
+              <RenderBirthdays />
             ) : (
               <ListGroupItem>No upcoming birthdays</ListGroupItem>
             )}
@@ -113,11 +174,5 @@ function Events() {
     </div>
   );
 }
-
-const styles = {
-  button: {
-    boxShadow: "none",
-  },
-};
 
 export default Events;

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
@@ -7,12 +8,25 @@ from .serializers import *
 
 
 class EventView(ListAPIView):
-    queryset = Event.objects.filter(date__gte=timezone.now().date())
+    queryset = Event.objects.filter(date__gte=timezone.localdate())
     serializer_class = EventSerializer
 
 
 class BirthdayView(ListAPIView):
-    queryset = Birthday.objects.filter(date__month=timezone.now().month)
+    _date_1_month_from_now = timezone.localdate() + timedelta(days=31)
+    _month_from_date = Birthday.objects.filter(
+        date__month=timezone.localdate().month
+    ).filter(date__day__gte=timezone.localdate().day)
+    _date_plus_month = Birthday.objects.filter(
+        date__month=_date_1_month_from_now.month
+    ).filter(date__day__lte=_date_1_month_from_now.day)
+    queryset = _month_from_date | _date_plus_month
+    if _date_1_month_from_now.month == 1:
+        queryset = sorted(
+            queryset,
+            key=lambda birthday: birthday.date.month,
+            reverse=True,
+        )
     serializer_class = BirthdaySerializer
 
 
