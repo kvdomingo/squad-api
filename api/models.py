@@ -7,10 +7,10 @@ class Event(models.Model):
     date = models.DateTimeField()
 
     class Meta:
-        ordering = ['date', 'group', 'name']
+        ordering = ["date", "group", "name"]
 
     def __str__(self):
-        return f'[{self.group.upper()}] {self.name}'
+        return f"[{self.group.upper()}] {self.name}"
 
 
 class Birthday(models.Model):
@@ -19,11 +19,11 @@ class Birthday(models.Model):
     date = models.DateField()
 
     class Meta:
-        ordering = ['date__month', 'date__day']
+        ordering = ["date__month", "date__day"]
 
     def __str__(self):
-        group = f'({self.group})' if self.group else ''
-        return f'[{self.date}] {self.name} {group}'
+        group = f"({self.group})" if self.group else ""
+        return f"[{self.date}] {self.name} {group}"
 
 
 class DiscordUser(models.Model):
@@ -32,26 +32,26 @@ class DiscordUser(models.Model):
     discriminator = models.CharField(max_length=4)
 
     def __str__(self):
-        return f'{self.username}#{self.discriminator}'
+        return f"{self.username}#{self.discriminator}"
 
 
 class Bias(models.Model):
     user = models.ForeignKey(
         DiscordUser,
-        related_name='biases',
+        related_name="biases",
         on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=32)
     currentHolder = models.ForeignKey(
         DiscordUser,
-        related_name='biases_won',
+        related_name="biases_won",
         on_delete=models.SET_NULL,
         null=True,
     )
 
     class Meta:
-        ordering = ['user__username', 'name']
-        verbose_name_plural = 'biases'
+        ordering = ["user__username", "name"]
+        verbose_name_plural = "biases"
 
     def __str__(self):
-        return f'{self.user.username} - {self.name}'
+        return f"{self.user.username} - {self.name}"

@@ -6,24 +6,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0011_bias'),
+        ("api", "0011_bias"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Birthday',
+            name="Birthday",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('group', models.CharField(blank=True, max_length=64, null=True)),
-                ('name', models.CharField(max_length=64)),
-                ('date', models.DateField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("group", models.CharField(blank=True, max_length=64, null=True)),
+                ("name", models.CharField(max_length=64)),
+                ("date", models.DateField()),
             ],
             options={
-                'ordering': ['date'],
+                "ordering": ["date"],
             },
         ),
         migrations.AlterModelOptions(
-            name='bias',
-            options={'ordering': ['user__username', 'name'], 'verbose_name_plural': 'biases'},
+            name="bias",
+            options={
+                "ordering": ["user__username", "name"],
+                "verbose_name_plural": "biases",
+            },
         ),
     ]

@@ -5,19 +5,19 @@ from .models import *
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = "__all__"
 
 
 class BirthdaySerializer(serializers.ModelSerializer):
     class Meta:
         model = Birthday
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DiscordUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscordUser
-        fields = '__all__'
+        fields = "__all__"
 
 
 class BiasSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class BiasSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bias
-        fields = '__all__'
+        fields = "__all__"
 
     def get_currentHolder(self, obj):
         user = DiscordUser.objects.get(pk=obj.currentHolder.id)

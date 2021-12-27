@@ -23,7 +23,7 @@ WORKDIR /backend
 
 EXPOSE $PORT
 
-ENTRYPOINT uvicorn squad_api.asgi:application --workers 4 --host 0.0.0.0 --port $PORT --reload
+ENTRYPOINT uvicorn squad_api.asgi:application --workers 4 --host 0.0.0.0 --port $PORT --reload --reload-exclude "env/, web/"
 
 FROM node:16-alpine as build
 

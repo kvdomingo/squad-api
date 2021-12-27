@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0008_discorduser'),
+        ("api", "0008_discorduser"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='discorduser',
-            name='discordId',
+            model_name="discorduser",
+            name="discordId",
             field=models.CharField(max_length=32),
         ),
     ]

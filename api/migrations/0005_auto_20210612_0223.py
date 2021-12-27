@@ -7,23 +7,23 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0004_auto_20210612_0223'),
+        ("api", "0004_auto_20210612_0223"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='event',
-            options={'ordering': ['date']},
+            name="event",
+            options={"ordering": ["date"]},
         ),
         migrations.AddField(
-            model_name='event',
-            name='date',
+            model_name="event",
+            name="date",
             field=models.DateField(default=django.utils.timezone.now),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='event',
-            name='time',
+            model_name="event",
+            name="time",
             field=models.TimeField(blank=True, null=True),
         ),
     ]

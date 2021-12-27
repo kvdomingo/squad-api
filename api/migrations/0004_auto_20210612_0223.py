@@ -6,20 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0003_auto_20210612_0222'),
+        ("api", "0003_auto_20210612_0222"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='event',
+            name="event",
             options={},
         ),
         migrations.RemoveField(
-            model_name='event',
-            name='date',
+            model_name="event",
+            name="date",
         ),
         migrations.RemoveField(
-            model_name='event',
-            name='time',
+            model_name="event",
+            name="time",
         ),
     ]

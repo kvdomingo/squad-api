@@ -12,8 +12,7 @@ class EventView(ListAPIView):
 
 
 class BirthdayView(ListAPIView):
-    queryset = (Birthday.objects
-                .filter(date__month=timezone.now().month))
+    queryset = Birthday.objects.filter(date__month=timezone.now().month)
     serializer_class = BirthdaySerializer
 
 
@@ -48,6 +47,6 @@ class BiasView(APIView):
     def get(self, request, discord_id):
         qs1 = Bias.objects.filter(user__discordId=discord_id)
         qs2 = Bias.objects.filter(currentHolder__discordId=discord_id)
-        queryset = (qs1 | qs2).distinct().order_by('user')
+        queryset = (qs1 | qs2).distinct().order_by("user")
         serializer = BiasSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
