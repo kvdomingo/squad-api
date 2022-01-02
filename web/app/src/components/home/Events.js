@@ -5,6 +5,7 @@ import {
   MDBTypography as Type,
   MDBRow as Row,
   MDBCol as Col,
+  MDBIcon as Icon,
 } from "mdbreact";
 import dateFormat from "dateformat";
 import api from "../../utils/Endpoints";
@@ -76,8 +77,17 @@ function Events() {
           </Col>
           <Col>
             {dat.times[0].events.map(event => (
-              <div key={event.id} className="my-1">
-                <b>{event.group.toUpperCase()}</b> {event.name.replace(/'/g, '"')}
+              <div key={event.id} className="my-1 d-flex justify-content-between">
+                <div>
+                  <b>{event.group}</b> {event.name}
+                </div>
+                {!!event.source && (
+                  <div>
+                    <a href={event.source} target="_blank" rel="noopener noreferrer" className="white-text">
+                      <Icon fas icon="external-link-alt" size="sm" />
+                    </a>
+                  </div>
+                )}
               </div>
             ))}
           </Col>

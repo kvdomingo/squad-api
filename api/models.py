@@ -5,12 +5,13 @@ class Event(models.Model):
     group = models.CharField(max_length=64)
     name = models.CharField(max_length=256)
     date = models.DateTimeField()
+    source = models.URLField(blank=True, null=True)
 
     class Meta:
         ordering = ["date", "group", "name"]
 
     def __str__(self):
-        return f"[{self.group.upper()}] {self.name}"
+        return f"[{self.group}] {self.name}"
 
 
 class Birthday(models.Model):
