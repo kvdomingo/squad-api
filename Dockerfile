@@ -1,11 +1,3 @@
-FROM node:16-alpine as web
-
-WORKDIR /frontend
-
-EXPOSE $PORT
-
-ENTRYPOINT npm run start
-
 FROM pypy:3.8-7-buster as base
 
 RUN python -m pip install --no-cache-dir -U pip setuptools

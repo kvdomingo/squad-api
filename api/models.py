@@ -8,10 +8,10 @@ class Event(models.Model):
     source = models.URLField(blank=True, null=True)
 
     class Meta:
-        ordering = ["date", "group", "name"]
+        ordering = ["-date", "group", "name"]
 
     def __str__(self):
-        return f"[{self.group}] {self.name}"
+        return f"{self.date.strftime('%Y-%m-%d')} | {self.group} | {self.name}"
 
 
 class Birthday(models.Model):

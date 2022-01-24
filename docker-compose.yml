@@ -14,8 +14,8 @@ services:
 
   frontend:
     build:
-      context: .
-      target: web
+      context: ./web/app
+      target: dev
     image: kvdomingo/squadtime-web:latest
     env_file: ./web/app/.env
     volumes:
