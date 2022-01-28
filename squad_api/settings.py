@@ -32,6 +32,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY", default=get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", "0")))
 
+DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
+
 PYTHON_ENV = os.environ.get("PYTHON_ENV", "production")
 
 ALLOWED_HOSTS = ["schedule.kvdstudio.app"]

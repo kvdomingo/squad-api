@@ -13,14 +13,18 @@ class EventView(ListAPIView):
 
 
 class BirthdayView(ListAPIView):
-    _date_1_month_from_now = timezone.localdate() + timedelta(days=31)
-    _month_from_date = Birthday.objects.filter(
+    _date_1_month_from_now = timezone.localdate() + timedelta(days=28)
+
+    _birthdays_left_this_month = Birthday.objects.filter(
         date__month=timezone.localdate().month
     ).filter(date__day__gte=timezone.localdate().day)
-    _date_plus_month = Birthday.objects.filter(
+
+    _birthdays_next_month = Birthday.objects.filter(
         date__month=_date_1_month_from_now.month
     ).filter(date__day__lte=_date_1_month_from_now.day)
-    queryset = _month_from_date | _date_plus_month
+
+    queryset = _birthdays_left_this_month | _birthdays_next_month
+
     if _date_1_month_from_now.month == 1:
         queryset = sorted(
             queryset,
