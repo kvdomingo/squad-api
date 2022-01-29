@@ -13,14 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import json
 from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path, re_path
 from django.shortcuts import render
-from django.templatetags.static import static
-from django.views.generic.base import RedirectView, TemplateView
-from revproxy.views import ProxyView
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -28,11 +25,7 @@ urlpatterns = [
     path("api/v1.0/", include("api.urls")),
 ]
 
-if settings.PYTHON_ENV == "development":
-    urlpatterns.append(
-        re_path(r"^(?P<path>.*)$", ProxyView.as_view(upstream="http://frontend:3000"))
-    )
-else:
+if settings.PYTHON_ENV == "production":
     urlpatterns.append(
         path(
             "robots.txt",

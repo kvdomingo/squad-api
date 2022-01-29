@@ -7,8 +7,6 @@ services:
       target: dev
     image: kvdomingo/squadtime-api:latest
     env_file: .env
-    ports:
-      - ${PORT}:${PORT}
     volumes:
       - .:/backend
 
@@ -20,3 +18,17 @@ services:
     env_file: ./web/app/.env
     volumes:
       - ./web/app:/frontend
+
+  proxy:
+    image: nginx:latest
+    ports:
+      - 8000:8000
+    command:
+      - nginx
+      - "-g"
+      - daemon off;
+    volumes:
+      - ./proxy/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - apiserver
+    restart: unless-stopped

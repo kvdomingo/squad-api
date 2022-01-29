@@ -13,14 +13,10 @@ FROM base as dev
 
 WORKDIR /backend
 
-EXPOSE $PORT
-
-ENTRYPOINT gunicorn squad_api.wsgi -b 0.0.0.0:$PORT \
+ENTRYPOINT gunicorn squad_api.wsgi -b 0.0.0.0:5000 \
     --workers 2 \
     --threads 4 \
     --log-file - \
-    --access-logfile - \
-    --access-logformat "%(t)s %(r)s %(s)s %(M)sms" \
     --capture-output \
     --reload
 
