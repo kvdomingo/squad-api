@@ -47,20 +47,13 @@ if PYTHON_ENV == "development":
         ]
     )
 
-CORS_ORIGIN_ALLOW_ALL = False
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https:\/\/schedule\.kvdstudio\.app$",
-]
-
 if PYTHON_ENV == "development":
-    CORS_ALLOWED_ORIGIN_REGEXES.extend(
-        [
-            r"^http:\/\/localhost:300\d$",
-            r"^http:\/\/127\.0\.0\.1:300\d$",
-            r"^http:\/\/0\.0\.0\.0:\d{4,}$",
-        ]
-    )
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ORIGIN_ALLOW_ALL = False
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r"^https:\/\/schedule\.kvdstudio\.app$",
+    ]
 
 # Application definition
 
@@ -72,7 +65,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "revproxy",
     "corsheaders",
     "rest_framework",
 ]
