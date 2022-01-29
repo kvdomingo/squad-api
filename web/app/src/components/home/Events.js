@@ -20,7 +20,7 @@ function Events() {
   });
 
   useEffect(() => {
-    setLoading({ birthdays: true, events: true });
+    if (!events.length && !birthdays.length) setLoading({ birthdays: true, events: true });
     api.home
       .events()
       .then(res => setEvents(res.data))
