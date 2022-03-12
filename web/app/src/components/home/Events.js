@@ -6,6 +6,9 @@ import {
   MDBRow as Row,
   MDBCol as Col,
   MDBIcon as Icon,
+  MDBTable as Table,
+  MDBTableHead as TableHead,
+  MDBTableBody as TableBody,
 } from "mdbreact";
 import dateFormat from "dateformat";
 import api from "../../utils/Endpoints";
@@ -66,34 +69,48 @@ function Events() {
       }
     });
 
-    return render.map((dat, i) => (
-      <ListGroupItem key={i} active={isToday(new Date(dat.date))}>
-        <Row>
-          <Col size="2" className="d-flex align-items-center justify-content-end px-0">
-            {dateFormat(new Date(dat.date), "mmm d")}
-          </Col>
-          <Col size="2" className="d-flex align-items-center justify-content-center">
-            {dateFormat(new Date(dat.times[0].date), "HH:MM")}
-          </Col>
-          <Col>
-            {dat.times[0].events.map(event => (
-              <div key={event.id} className="my-1 d-flex justify-content-between">
-                <div>
-                  <b>{event.group}</b> {event.name}
-                </div>
-                {!!event.source && (
-                  <div>
-                    <a href={event.source} target="_blank" rel="noopener noreferrer" className="white-text">
-                      <Icon fas icon="external-link-alt" size="sm" />
-                    </a>
-                  </div>
-                )}
-              </div>
-            ))}
-          </Col>
-        </Row>
-      </ListGroupItem>
-    ));
+    return render.map((dat, i) =>
+      dat.times.map((time, j) =>
+        time.events.map((event, k) => (
+          <tr key={`${i}-${j}-${k}`} bgcolor={isToday(new Date(dat.date)) ? "#4b515d" : undefined}>
+            {j === 0 && k === 0 && (
+              <td
+                key={i}
+                rowSpan={dat.times.map(t => t.events.length).reduce((prev, acc) => prev + acc, 0)}
+                style={{
+                  verticalAlign: "middle",
+                  borderColor: "#363c47",
+                }}
+              >
+                {dateFormat(new Date(dat.date), "mmm d")}
+              </td>
+            )}
+            {k === 0 && (
+              <td
+                key={j}
+                rowSpan={time.events.length}
+                style={{
+                  verticalAlign: "middle",
+                  borderColor: "#363c47",
+                }}
+              >
+                {dateFormat(new Date(time.date), "HH:MM")}
+              </td>
+            )}
+            <td key={k} style={{ borderColor: "#363c47" }}>
+              <b>{event.group}</b> {event.name}
+            </td>
+            <td key={k} align="right" style={{ borderColor: "#363c47" }}>
+              {!!event.source && (
+                <a href={event.source} target="_blank" rel="noopener noreferrer" className="white-text">
+                  <Icon fas icon="external-link-alt" size="sm" />
+                </a>
+              )}
+            </td>
+          </tr>
+        )),
+      ),
+    );
   }
 
   function RenderBirthdays() {
@@ -140,27 +157,35 @@ function Events() {
     <div>
       <Row className="row-cols row-cols-1 row-cols-md-2">
         <Col className="mb-5 mb-md-1">
-          <ListGroup>
-            <ListGroupItem>
-              <Type variant="h3-responsive" tag="h1">
-                <b>Upcoming Events</b>
-              </Type>
-            </ListGroupItem>
-            {loading.events ? (
-              <div className="my-5 spinner-border mx-auto" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>
-            ) : events.length > 0 ? (
-              <>
+          <Table>
+            <caption>
+              <small>
+                <i>All times have been automatically converted to your local time.</i>
+              </small>
+            </caption>
+            <TableHead textWhite>
+              <tr>
+                <th colSpan={4} style={{ borderColor: "#363c47" }}>
+                  <Type variant="h1-responsive" tag="h1">
+                    <b>Upcoming Events</b>
+                  </Type>
+                </th>
+              </tr>
+            </TableHead>
+            <TableBody textWhite>
+              {loading.events ? (
+                <div className="my-5 spinner-border mx-auto" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
+              ) : events.length > 0 ? (
                 <RenderEvents />
-                <small className="my-3 grey-text">
-                  <i>All times have been automatically converted to your local time.</i>
-                </small>
-              </>
-            ) : (
-              <ListGroupItem>No upcoming events</ListGroupItem>
-            )}
-          </ListGroup>
+              ) : (
+                <tr>
+                  <td>No upcoming events</td>
+                </tr>
+              )}
+            </TableBody>
+          </Table>
         </Col>
         <Col>
           <ListGroup>
