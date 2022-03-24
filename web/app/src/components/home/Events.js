@@ -21,25 +21,42 @@ function Events() {
     events: true,
     birthdays: true,
   });
+  const [groups, setGroups] = useState([]);
+  const [groupFilter, setGroupFilter] = useState("");
 
   useEffect(() => {
     if (!events.length && !birthdays.length) setLoading({ birthdays: true, events: true });
-    api.home
-      .events()
-      .then(res => setEvents(res.data))
-      .catch(err => console.error(err.message))
-      .finally(() => setLoading(prevState => ({ ...prevState, events: false })));
 
-    api.home
-      .birthdays()
-      .then(res => setBirthdays(res.data))
-      .catch(err => console.error(err.message))
-      .finally(() => setLoading(prevState => ({ ...prevState, birthdays: false })));
+    function getEvents() {
+      api.home
+        .events()
+        .then(res => setEvents(res.data))
+        .catch(err => console.error(err.message))
+        .finally(() => setLoading(prevState => ({ ...prevState, events: false })));
+    }
+
+    function getBirthdays() {
+      api.home
+        .birthdays()
+        .then(res => setBirthdays(res.data))
+        .catch(err => console.error(err.message))
+        .finally(() => setLoading(prevState => ({ ...prevState, birthdays: false })));
+    }
+
+    (async () => {
+      getEvents();
+      getBirthdays();
+    })();
   }, []);
+
+  useEffect(() => {
+    setGroups([...new Set(events.map(event => event.group))].sort((a, b) => a.localeCompare(b)));
+  }, [events]);
 
   function RenderEvents() {
     let render = [];
-    events.forEach(event => {
+    let filteredEvents = !!groupFilter ? events.filter(event => event.group === groupFilter) : [...events];
+    filteredEvents.forEach(event => {
       let dateString = new Date(event.date).toLocaleDateString();
       let timeString = new Date(event.date).toLocaleTimeString();
       let indexOfDate = render.findIndex(ren => ren.dateString === dateString);
@@ -94,7 +111,7 @@ function Events() {
                   borderColor: "#363c47",
                 }}
               >
-                {dateFormat(new Date(time.date), "HH:MM")}
+                {dateFormat(new Date(time.date), "h:MM tt")}
               </td>
             )}
             <td key={k} style={{ borderColor: "#363c47" }}>
@@ -160,7 +177,7 @@ function Events() {
           <Table>
             <caption>
               <small>
-                <i>All times have been automatically converted to your local time.</i>
+                <i>All times have been converted to your local time.</i>
               </small>
             </caption>
             <TableHead textWhite>
@@ -173,6 +190,22 @@ function Events() {
               </tr>
             </TableHead>
             <TableBody textWhite>
+              <tr>
+                <td colSpan={4}>
+                  <select
+                    className="browser-default custom-select stylish-color white-text"
+                    value={groupFilter}
+                    onChange={e => setGroupFilter(e.target.value)}
+                  >
+                    <option value="">No filter</option>
+                    {groups.map(group => (
+                      <option key={group} value={group}>
+                        {group}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
               {loading.events ? (
                 <div className="my-5 spinner-border mx-auto" role="status">
                   <span className="sr-only">Loading...</span>

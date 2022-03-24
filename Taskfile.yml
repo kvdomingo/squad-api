@@ -1,9 +1,16 @@
 version: '3'
 
+dotenv:
+  - .env
+
 tasks:
   default:
     cmds:
       - docker compose up -d --build
+
+  sql-proxy:
+    cmds:
+      - cloud_sql_proxy -instances=$CLOUD_SQL_URL=tcp:0.0.0.0:3306
 
   logs:
     cmds:
