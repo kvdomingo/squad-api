@@ -3,6 +3,9 @@ version: '3'
 dotenv:
   - .env
 
+env:
+  PROD_NAME: squad-app-prod
+
 tasks:
   default:
     cmds:
@@ -14,11 +17,11 @@ tasks:
 
   logs:
     cmds:
-      - docker compose logs --follow
+      - docker compose logs --follow {{.CLI_ARGS}}
 
   shutdown:
     cmds:
-      - docker compose stop
+      - docker compose stop {{.CLI_ARGS}}
 
   remove-all:
     cmds:
@@ -26,8 +29,20 @@ tasks:
 
   restart-proxy:
     cmds:
-      - docker compose restart proxy
+      - docker compose exec -- proxy nginx -s reload
 
   restart-all:
     cmds:
-      - docker compose restart
+      - docker compose restart {{.CLI_ARGS}}
+
+  prod:
+    cmds:
+      - docker compose -f docker-compose.prod.yml -p {{.PROD_NAME}} up -d --build
+
+  prod-logs:
+    cmds:
+      - docker compose -f docker-compose.prod.yml -p {{.PROD_NAME}} logs --follow {{.CLI_ARGS}}
+
+  prod-clean:
+    cmds:
+      - docker compose -f docker-compose.prod.yml -p {{.PROD_NAME}} down -v --remove-orphans
