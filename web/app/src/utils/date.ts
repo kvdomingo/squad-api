@@ -1,4 +1,4 @@
-export function isToday(date) {
+export function isToday(date: Date): boolean {
   const today = new Date();
   return (
     date.getFullYear() === today.getFullYear() &&
