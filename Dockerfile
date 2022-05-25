@@ -1,50 +1,53 @@
-FROM pypy:3.8-7-buster as base
+FROM python:3.10-bullseye as base
 
-RUN python -m pip install --no-cache-dir -U pip setuptools
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV POETRY_VERSION 1.1.12
 
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install poetry==$POETRY_VERSION
 
 FROM base as dev
 
 WORKDIR /backend
 
-ENTRYPOINT gunicorn squad_api.wsgi \
-           -b 0.0.0.0:5000 \
-           --graceful-timeout 5 \
-           --log-file - \
-           --capture-output \
-           --reload
+COPY pyproject.toml poetry.lock ./
+
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi
+
+ENTRYPOINT [ "gunicorn", "squad_api.wsgi", "-b", "0.0.0.0:5000", "-c", "./gunicorn.conf.py", "--reload" ]
 
 FROM node:16-alpine as build
 
 WORKDIR /web/app
 
-COPY ./web/app/public/ ./public/
-COPY ./web/app/src/ ./src/
 COPY ./web/app/package.json ./web/app/yarn.lock ./
 
-RUN yarn install
+RUN yarn
+
+COPY ./web/app/public/ ./public/
+COPY ./web/app/src/ ./src/
 
 RUN yarn build
 
 FROM base as prod
+
+WORKDIR /tmp
+
+COPY pyproject.toml poetry.lock ./
+
+RUN poetry export -f requirements.txt | pip install --no-cache-dir -r /dev/stdin
 
 WORKDIR /backend
 
 COPY ./api/ ./api/
 COPY ./squad_api/ ./squad_api/
 COPY ./*.py ./
+COPY ./*.sh ./
 COPY --from=build /web/app/build ./web/app/
+
+RUN chmod +x docker-entrypoint.sh
 
 EXPOSE $PORT
 
-ENTRYPOINT python manage.py collectstatic --noinput && \
-           python manage.py migrate && \
-           gunicorn squad_api.wsgi \
-           -b 0.0.0.0:$PORT \
-           --log-file - \
-           --access-logfile - \
-           --log-level info \
-           --capture-output
+ENTRYPOINT [ "./docker-entrypoint.sh" ]

@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  apiserver:
+  backend:
     build:
       context: .
       target: dev
@@ -15,15 +15,32 @@ services:
       context: ./web/app
       target: dev
     image: kvdomingo/squadtime-web:latest
-    env_file: ./web/app/.env
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3000
+      - CHOKIDAR_USEPOLLING=true
+      - TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
+      - WDS_SOCKET_PORT=0
     volumes:
       - ./web/app:/frontend
 
   proxy:
     image: bitnami/nginx:1.21.6
-    ports:
-      - 8000:8000
     environment:
       - NGINX_HTTP_PORT_NUMBER=8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.squad-schedule.rule=Host(`squad-schedule.localhost`)"
+      - "traefik.http.routers.squad-schedule.entrypoints=web"
+      - "traefik.docker.network=dev"
+      - "traefik.http.services.squad-schedule.loadbalancer.server.port=8000"
     volumes:
       - ./proxy/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/schedule.conf:ro
+    networks:
+      - default
+      - dev
+
+networks:
+  dev:
+    external: true

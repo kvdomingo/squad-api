@@ -4,16 +4,16 @@ dotenv:
   - .env
 
 env:
-  PROD_NAME: squad-app-prod
+  NAME: squad-schedule-dev
 
 tasks:
   default:
     cmds:
-      - docker compose up -d --build
+      - docker compose up -d --build {{.CLI_ARGS}}
 
-  sql-proxy:
+  sqlproxy:
     cmds:
-      - cloud_sql_proxy -instances=$CLOUD_SQL_URL=tcp:0.0.0.0:3306
+      - cloud_sql_proxy -instances=$CLOUD_SQL_URL=tcp:0.0.0.0:5555
 
   logs:
     cmds:
@@ -27,22 +27,10 @@ tasks:
     cmds:
       - docker compose down -v --remove-orphans
 
-  restart-proxy:
+  reload-proxy:
     cmds:
       - docker compose exec -- proxy nginx -s reload
 
-  restart-all:
+  restart:
     cmds:
       - docker compose restart {{.CLI_ARGS}}
-
-  prod:
-    cmds:
-      - docker compose -f docker-compose.prod.yml -p {{.PROD_NAME}} up -d --build
-
-  prod-logs:
-    cmds:
-      - docker compose -f docker-compose.prod.yml -p {{.PROD_NAME}} logs --follow {{.CLI_ARGS}}
-
-  prod-clean:
-    cmds:
-      - docker compose -f docker-compose.prod.yml -p {{.PROD_NAME}} down -v --remove-orphans
