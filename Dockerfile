@@ -19,9 +19,9 @@ ENTRYPOINT [ "gunicorn", "squad_api.wsgi", "-b", "0.0.0.0:5000", "-c", "./gunico
 
 FROM node:16-alpine as build
 
-WORKDIR /web/app
+WORKDIR /web
 
-COPY ./web/app/package.json ./web/app/yarn.lock ./
+COPY ./web/app/package.json ./web/app/yarn.lock ./web/app/tsconfig.json ./
 
 RUN yarn
 
@@ -44,7 +44,7 @@ COPY ./api/ ./api/
 COPY ./squad_api/ ./squad_api/
 COPY ./*.py ./
 COPY ./*.sh ./
-COPY --from=build /web/app/build ./web/app/
+COPY --from=build /web/build ./web/app/
 
 RUN chmod +x docker-entrypoint.sh
 
