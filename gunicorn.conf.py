@@ -1,4 +1,8 @@
-worker_class = "gevent"
+wsgi_app = "squad_api.wsgi"
+
+worker_class = "gthread"
+workers = 1
+threads = 2
 
 errorlog = "-"
 accesslog = "-"

@@ -15,7 +15,7 @@ COPY pyproject.toml poetry.lock ./
 RUN poetry config virtualenvs.create false && \
     poetry install --no-interaction --no-ansi
 
-ENTRYPOINT [ "gunicorn", "squad_api.wsgi", "-b", "0.0.0.0:5000", "-c", "./gunicorn.conf.py", "--reload" ]
+ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:5000", "-c", "./gunicorn.conf.py", "--reload" ]
 
 FROM node:16-alpine as build
 

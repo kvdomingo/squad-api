@@ -1,8 +1,8 @@
-import { memo } from "react";
 import { MDBIcon as Icon } from "mdbreact";
-import { isToday } from "../utils/date";
-import { Event } from "../api/types/event";
+import { memo } from "react";
 import dateFormat from "dateformat";
+import { Event } from "../api/types/event";
+import { isToday } from "../utils/date";
 
 interface Props {
   events: Event[];
@@ -68,23 +68,13 @@ function Events({ events, groupFilter }: Props) {
               <td
                 key={`date-${i}`}
                 rowSpan={dat.times.map(t => t.events.length).reduce((prev, acc) => prev + acc, 0)}
-                style={{
-                  verticalAlign: "middle",
-                  borderColor: "#363c47",
-                }}
+                style={{ borderColor: "#363c47" }}
               >
                 {dateFormat(new Date(dat.date), "mmm d")}
               </td>
             )}
             {k === 0 && (
-              <td
-                key={`time-${j}`}
-                rowSpan={time.events.length}
-                style={{
-                  verticalAlign: "middle",
-                  borderColor: "#363c47",
-                }}
-              >
+              <td key={`time-${j}`} rowSpan={time.events.length} style={{ borderColor: "#363c47" }}>
                 {dateFormat(new Date(time.date), "h:MM tt")}
               </td>
             )}

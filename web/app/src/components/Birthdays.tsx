@@ -1,7 +1,7 @@
-import { memo } from "react";
 import { MDBCol as Col, MDBListGroupItem as ListGroupItem, MDBRow as Row } from "mdbreact";
-import { Birthday } from "../api/types/birthday";
+import { memo } from "react";
 import dateFormat from "dateformat";
+import { Birthday } from "../api/types/birthday";
 
 interface Props {
   birthdays: Birthday[];
@@ -39,7 +39,7 @@ function Birthdays({ birthdays }: Props) {
         }
       >
         <Row>
-          <Col size="2" className="d-flex align-items-center justify-content-end px-0">
+          <Col size="2" className="d-flex align-items-start justify-content-end px-0">
             {dateFormat(new Date(dat.date), "mmm d")}
           </Col>
           <Col>

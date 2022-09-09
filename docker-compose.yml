@@ -28,19 +28,19 @@ services:
   proxy:
     image: bitnami/nginx:1.21.6
     environment:
-      - NGINX_HTTP_PORT_NUMBER=8000
+      - NGINX_HTTP_PORT_NUMBER=${HTTP_PORT}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.squad-schedule.rule=Host(`squad-schedule.localhost`)"
-      - "traefik.http.routers.squad-schedule.entrypoints=web"
-      - "traefik.docker.network=dev"
-      - "traefik.http.services.squad-schedule.loadbalancer.server.port=8000"
+      - "traefik.http.routers.squad-schedule.entrypoints=http"
+      - "traefik.docker.network=gateway"
+      - "traefik.http.services.squad-schedule.loadbalancer.server.port=${HTTP_PORT}"
     volumes:
       - ./proxy/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/schedule.conf:ro
     networks:
       - default
-      - dev
+      - gateway
 
 networks:
-  dev:
+  gateway:
     external: true

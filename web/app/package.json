@@ -13,7 +13,7 @@
     "@types/react-dom": "^18.0.5",
     "@types/react-helmet": "^6.1.5",
     "axios": "^0.21.1",
-    "dateformat": "^4.5.1",
+    "dateformat": "^5.0.3",
     "mdbreact": "^5.0.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -48,12 +48,22 @@
     ]
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
     "prettier": "^2.3.1",
     "prop-types": "^15.7.2"
   },
   "prettier": {
     "arrowParens": "avoid",
     "bracketSpacing": true,
+    "importOrder": [
+      "react",
+      "react-dom",
+      "^react(.*)$",
+      "<THIRD_PARTY_MODULES>",
+      "^[./]"
+    ],
+    "importOrderSeparation": false,
+    "importOrderSortSpecifiers": true,
     "jsxSingleQuote": false,
     "printWidth": 120,
     "quoteProps": "consistent",

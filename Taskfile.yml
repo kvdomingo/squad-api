@@ -10,6 +10,7 @@ tasks:
   default:
     cmds:
       - docker compose up -d --build {{.CLI_ARGS}}
+      - task logs
 
   sqlproxy:
     cmds:
